@@ -8,9 +8,7 @@ export function ProfileSettings() {
     <Card>
       <CardHeader>
         <CardTitle>Business Profile</CardTitle>
-        <CardDescription>
-          Manage your organization's identity and contact information.
-        </CardDescription>
+        <CardDescription>Update your personal information and how others see you on the platform.</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-2">

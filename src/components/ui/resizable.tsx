@@ -10,7 +10,7 @@ function ResizablePanelGroup({
 }: ResizablePrimitive.GroupProps & { direction?: "horizontal" | "vertical" }) {
   return (
     <ResizablePrimitive.Group
-      direction={props.direction as any}
+      direction={props.direction as unknown}
       data-slot="resizable-panel-group"
       className={cn(
         "flex h-full w-full aria-[orientation=vertical]:flex-col",

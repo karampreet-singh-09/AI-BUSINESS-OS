@@ -42,7 +42,7 @@ const nodeTypes = {
 }
 
 // --- Initial Mock Data ---
-const initialNodes: Node[] = [
+const initialNodes: Node<Record<string, unknown>>[] = [
   { 
     id: '1', 
     type: 'workflowNode', 

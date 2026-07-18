@@ -24,7 +24,7 @@ export default function ChatPage() {
             {/* User Message */}
             <div className="flex items-start gap-4 justify-end">
               <div className="bg-primary text-primary-foreground px-4 py-3 rounded-2xl rounded-tr-sm max-w-[80%]">
-                <p>Hey, can you analyze our customer churn this month and send a report to the team?</p>
+                <p>Hey! I am having trouble logging into my account. It says &quot;invalid credentials&quot; but I&apos;m sure my password is correct.</p>
               </div>
               <Avatar className="w-8 h-8">
                 <AvatarFallback>U</AvatarFallback>
