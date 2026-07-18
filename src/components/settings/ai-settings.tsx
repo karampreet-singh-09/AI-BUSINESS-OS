@@ -37,8 +37,8 @@ export function AISettings() {
 
         <div className="flex items-center justify-between space-x-2 pt-4 border-t">
           <div className="flex flex-col space-y-1">
-            <Label>Autonomous Actions</Label>
-            <span className="text-sm text-muted-foreground">Allow AI to send emails and update records without approval.</span>
+            <Label>Full Autopilot Mode</Label>
+            <span className="text-sm text-muted-foreground">Allow AI to instantly reply to customers without human approval.</span>
           </div>
           <Switch />
         </div>
