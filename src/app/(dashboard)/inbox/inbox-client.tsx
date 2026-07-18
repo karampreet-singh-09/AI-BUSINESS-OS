@@ -9,7 +9,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { CustomerProfile } from "@/components/crm/customer-profile"
-import { Search, Sparkles, Send, Paperclip, Phone, MoreVertical, MessageCircle } from "lucide-react"
+import { Search, Sparkles, Send, Paperclip, Phone, MoreVertical, MessageCircle, Loader2 } from "lucide-react"
 import { sendMessage } from "@/app/actions/messages"
 
 export default function InboxClient({ initialConversations }: { initialConversations: any[] }) {
@@ -17,6 +17,7 @@ export default function InboxClient({ initialConversations }: { initialConversat
   const [draft, setDraft] = useState("")
   const [conversations, setConversations] = useState(initialConversations)
   const [isSending, setIsSending] = useState(false)
+  const [isDrafting, setIsDrafting] = useState(false)
   const scrollRef = useRef<HTMLDivElement>(null)
 
   // Auto-scroll to bottom of chat
@@ -25,6 +26,32 @@ export default function InboxClient({ initialConversations }: { initialConversat
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight
     }
   }, [activeChat?.messages])
+
+  const handleAutoDraft = async () => {
+    if (!activeChat || activeChat.messages.length === 0 || isDrafting) return
+    setIsDrafting(true)
+
+    try {
+      const res = await fetch("/api/ai/draft", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          messages: activeChat.messages,
+          customerName: activeChat.customer.name 
+        })
+      })
+
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error)
+
+      setDraft(data.draft)
+    } catch (e) {
+      console.error("Failed to auto-draft", e)
+      setDraft("Sorry, AI drafting failed. Please try again.")
+    } finally {
+      setIsDrafting(false)
+    }
+  }
 
   const handleSend = async () => {
     if (!draft.trim() || !activeChat || isSending) return
@@ -152,8 +179,15 @@ export default function InboxClient({ initialConversations }: { initialConversat
 
                 <div className="p-4 bg-background border-t">
                   <div className="flex gap-2 mb-2">
-                     <Button variant="secondary" size="sm" className="h-7 text-xs rounded-full">
-                       <Sparkles className="w-3 h-3 mr-1 text-primary" /> Auto-Draft Reply
+                     <Button 
+                        variant="secondary" 
+                        size="sm" 
+                        className="h-7 text-xs rounded-full"
+                        onClick={handleAutoDraft}
+                        disabled={isDrafting || activeChat.messages.length === 0}
+                     >
+                       {isDrafting ? <Loader2 className="w-3 h-3 mr-1 animate-spin" /> : <Sparkles className="w-3 h-3 mr-1 text-primary" />}
+                       {isDrafting ? "Drafting..." : "Auto-Draft Reply"}
                      </Button>
                      <Button variant="outline" size="sm" className="h-7 text-xs rounded-full">Ask for Order ID</Button>
                   </div>
