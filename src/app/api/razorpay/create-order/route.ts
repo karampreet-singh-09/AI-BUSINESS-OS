@@ -4,6 +4,7 @@ import Razorpay from "razorpay"
 
 export async function POST(req: Request) {
   try {
+    const { planId } = await req.json()
     const supabase = await createClient()
 
     // 1. Authenticate User
@@ -24,34 +25,39 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "No organization found" }, { status: 400 })
     }
 
+    if (!planId) {
+      return NextResponse.json({ error: "Plan ID is required" }, { status: 400 })
+    }
+
     // 3. Initialize Razorpay
     const razorpay = new Razorpay({
       key_id: process.env.RAZORPAY_KEY_ID!,
       key_secret: process.env.RAZORPAY_KEY_SECRET!,
     })
 
-    // 4. Create Order (e.g., ₹9,999 One-time Pro Plan)
+    // 4. Create Subscription
     const options = {
-      amount: 999900, // Amount is in currency subunits (paise) = ₹9,999
-      currency: "INR",
-      receipt: `receipt_${orgId}`,
+      plan_id: planId,
+      customer_notify: 1 as 1,
+      total_count: 120, // 10 years by default for monthly recurring
       notes: {
-        organization_id: orgId
+        organization_id: orgId,
+        plan_tier: planId === process.env.NEXT_PUBLIC_RAZORPAY_BASE_PLAN_ID ? 'base' : 'advanced'
       }
     }
 
-    const order = await razorpay.orders.create(options)
+    const subscription = await razorpay.subscriptions.create(options)
 
-    // 5. Save order ID to database
+    // 5. Save subscription ID to database
     await supabase
       .from("organizations")
-      .update({ razorpay_order_id: order.id })
+      .update({ razorpay_order_id: subscription.id }) // repurposing column for subscription ID temporarily
       .eq("id", orgId)
 
-    return NextResponse.json({ orderId: order.id, amount: options.amount, currency: options.currency })
+    return NextResponse.json({ subscriptionId: subscription.id })
 
   } catch (error: any) {
     console.error("Razorpay Error:", error)
-    return NextResponse.json({ error: error.message || "Failed to create order" }, { status: 500 })
+    return NextResponse.json({ error: error.message || "Failed to create subscription" }, { status: 500 })
   }
 }

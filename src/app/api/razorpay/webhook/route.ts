@@ -27,12 +27,12 @@ export async function POST(req: Request) {
 
     const event = JSON.parse(bodyText)
 
-    // 2. Handle Payment Capture Success
-    if (event.event === "payment.captured" || event.event === "order.paid") {
-      const paymentEntity = event.payload.payment.entity
-      const orderId = paymentEntity.order_id
-      const paymentId = paymentEntity.id
-      const orgId = paymentEntity.notes?.organization_id
+    // 2. Handle Subscription Activated/Charged
+    if (event.event === "subscription.activated" || event.event === "subscription.charged") {
+      const subscriptionEntity = event.payload.subscription.entity
+      const orgId = subscriptionEntity.notes?.organization_id
+      const planTier = subscriptionEntity.notes?.plan_tier || 'base'
+      const subscriptionId = subscriptionEntity.id
 
       if (orgId) {
         // Initialize Supabase Admin Client
@@ -45,9 +45,9 @@ export async function POST(req: Request) {
         const { error } = await supabaseAdmin
           .from("organizations")
           .update({
-            plan_tier: "pro",
+            plan_tier: planTier,
             subscription_status: "active",
-            razorpay_payment_id: paymentId
+            razorpay_payment_id: subscriptionId // repurposing for sub id
           })
           .eq("id", orgId)
 
