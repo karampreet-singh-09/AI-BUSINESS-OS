@@ -4,6 +4,7 @@ import { TeamSettings } from "@/components/settings/team-settings"
 import { NotificationSettings } from "@/components/settings/notification-settings"
 import { AISettings } from "@/components/settings/ai-settings"
 import { AppearanceSettings } from "@/components/settings/appearance-settings"
+import { BillingSettings } from "@/components/settings/billing-settings"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 export default function SettingsPage() {
@@ -18,6 +19,7 @@ export default function SettingsPage() {
           <TabsList className="flex flex-row md:flex-col justify-start h-auto bg-transparent w-full md:w-48 overflow-x-auto gap-2">
             <TabsTrigger value="profile" className="justify-start data-[state=active]:bg-muted">Profile</TabsTrigger>
             <TabsTrigger value="team" className="justify-start data-[state=active]:bg-muted">Team & Roles</TabsTrigger>
+            <TabsTrigger value="billing" className="justify-start data-[state=active]:bg-muted">Billing</TabsTrigger>
             <TabsTrigger value="ai" className="justify-start data-[state=active]:bg-muted">AI Config</TabsTrigger>
             <TabsTrigger value="notifications" className="justify-start data-[state=active]:bg-muted">Notifications</TabsTrigger>
             <TabsTrigger value="appearance" className="justify-start data-[state=active]:bg-muted">Appearance</TabsTrigger>
@@ -29,6 +31,9 @@ export default function SettingsPage() {
             </TabsContent>
             <TabsContent value="team" className="mt-0">
               <TeamSettings />
+            </TabsContent>
+            <TabsContent value="billing" className="mt-0">
+              <BillingSettings />
             </TabsContent>
             <TabsContent value="ai" className="mt-0">
               <AISettings />
